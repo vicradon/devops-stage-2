@@ -1,6 +1,6 @@
-# Full-Stack FastAPI and React Template
+# Full-Stack FastAPI and React Template with Docker Deployment
 
-Welcome to the Full-Stack FastAPI and React template repository. This repository serves as a demo application for interns, showcasing how to set up and run a full-stack application with a FastAPI backend and a ReactJS frontend using ChakraUI.
+Welcome to the Full-Stack FastAPI and React template repository. This repository contains a sample frontend and backend project built with React.js and FastAPI respectively. It also contains a `compose.yaml` file that handles setup for testing and deployment purposes.
 
 ## Project Structure
 
@@ -8,6 +8,59 @@ The repository is organized into two main directories:
 
 - **frontend**: Contains the ReactJS application.
 - **backend**: Contains the FastAPI application and PostgreSQL database integration.
+
+You can take a peak at the frontend project structure below:
+
+```
+frontend
+├── biome.json
+├── Dockerfile
+├── index.html
+├── modify-openapi-operationids.js
+├── package.json
+├── package-lock.json
+├── public
+│   └── assets
+├── README.md
+├── src
+│   ├── client
+│   ├── components
+│   ├── hooks
+│   ├── main.tsx
+│   ├── routes
+│   ├── routeTree.gen.ts
+│   ├── theme.tsx
+│   ├── utils.ts
+│   └── vite-env.d.ts
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
+
+The basic backend structure is also shown below:
+
+```
+backend
+├── alembic.ini
+├── app
+│   ├── alembic
+│   ├── api
+│   ├── backend_pre_start.py
+│   ├── core
+│   ├── crud.py
+│   ├── email-templates
+│   ├── initial_data.py
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models.py
+│   ├── tests
+│   └── utils.py
+├── Dockerfile
+├── poetry.lock
+├── prestart.sh
+├── pyproject.toml
+└── README.md
+```
 
 Each directory has its own README file with detailed instructions specific to that part of the application.
 
@@ -18,3 +71,106 @@ To get started with this template, please follow the instructions in the respect
 - [Frontend README](./frontend/README.md)
 - [Backend README](./backend/README.md)
 
+## Host requirements
+
+To run this repository, your device should have at least:
+
+1. 5 GB of free space
+2. 4 GB of RAM
+
+## Components
+
+This full-stack project consists of 5 components. Find below the components and their respective ports:
+
+| Component            | Port(s)       |
+| -------------------- | ------------- |
+| Frontend             | 5173          |
+| Backend              | 8000          |
+| Postgresql DB        | 5432          |
+| Adminer (PhpMyAdmin) | 8080          |
+| Nginx Proxy Manager  | 8090, 80, 443 |
+
+## Default Credentials
+
+### Frontend Dashboard and Nginx Proxy Manager
+
+For the proxy manager and frontend dashboard, they are:
+
+**email**: devops@hng.tech \
+**password**: devops#HNG11
+
+### Adminer (PhpMyAdmin)
+
+For adminer, set the system as PostgreSQL, then the other credentials as follows:
+
+**Username**: app \
+**Password**: humanslovedbs \
+**Database**: app
+
+This is shown in the image below:
+
+![Adminer Credentials](https://gist.github.com/assets/40396070/369b7a67-c793-4c1f-ad52-8577778187a2)
+
+## Deployment Requirement
+
+To run the frontend and backend with minimal setup, ensure you have both [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed. Then run the command below:
+
+```sh
+docker compose up -d
+```
+
+The command above will run the docker compose file `compose.yaml` on the root directory of this repository and set up the components.
+
+## Deploying to cloud
+
+You can deploy to a cloud virtual machine in the same way you did locally. Simply ensure you have docker and docker compose installed and run the compose up command.
+
+## Setting up domain names
+
+You can include domain names in this project to get it shown to the internet. If you already have an existing domain, you can utilize subdomains of that domain. You should have three subdomains, or two subdomains and one main domain. If you're only using subdomains, configure it like so:
+
+| Subdomain                         | Service              | IP Address |
+| --------------------------------- | -------------------- | ---------- |
+| proxy.fullstackapp.yourdomain.ext | Nginx Proxy Manager  | your_vm_ip |
+| db.fullstackapp.yourdomain.ext    | Adminer              | your_vm_ip |
+| fullstackapp.yourdomain.ext       | Frontend and Backend | your_vm_ip |
+
+If instead your using a new domain, then you only need to create two subdomain. Configure it like so:
+
+| (sub)Domain          | Service              | IP Address |
+| -------------------- | -------------------- | ---------- |
+| proxy.yourdomain.ext | Nginx Proxy Manager  | your_vm_ip |
+| db.yourdomain.ext    | Adminer              | your_vm_ip |
+| yourdomain.ext       | Frontend and Backend | your_vm_ip |
+
+## Proxying the backend to the frontend using Nginx Proxy Manager
+
+The frontend and the backend will run on the same domain (or subdomain), so you must use Nginx proxy manager to handle the proxy setup. So after setting up your frontend + backend proxy host as shown below:
+
+![Frontend and backend setup](https://gist.github.com/assets/40396070/1115c697-592a-4353-bfb2-5fa13787c1a0)
+
+you should set the backend proxying in the custom locations tab:
+
+![Proxying in the /api, /docs, and /redoc](https://gist.github.com/assets/40396070/4b4eeb41-47af-4d33-95c7-ed089c233d75)
+
+After doing this, modify the compose.yaml frontend service's VITE_API_URL environment variable to instead point to your subdomain
+
+```yml
+frontend:
+  environment:
+    VITE_API_URL: "https://fullstackapp.yourdomain.ext"
+  build:
+    context: ./frontend
+    dockerfile: Dockerfile
+  ports:
+    - "5173:5173"
+  depends_on:
+    - backend
+  restart: always
+```
+
+## All the proxied applications
+
+After proxying all the components, your nginx proxy manager proxy dashboard will look like this:
+
+![Nginx proxy manager dashboard](https://gist.github.com/assets/40396070/94cc0b58-4233-470f-b650-02e0980a90d4)

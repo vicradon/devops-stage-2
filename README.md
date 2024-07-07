@@ -109,7 +109,7 @@ For adminer, set the system as PostgreSQL, then the other credentials as follows
 
 This is shown in the image below:
 
-![Adminer Credentials](https://gist.github.com/assets/40396070/369b7a67-c793-4c1f-ad52-8577778187a2)
+![Adminer Credentials](https://github.com/vicradon/devops-stage-2/assets/40396070/08b721b6-60da-449e-9ab5-83aad6cc0789)
 
 ## Deployment Requirement
 
@@ -147,11 +147,11 @@ If instead your using a new domain, then you only need to create two subdomain. 
 
 The frontend and the backend will run on the same domain (or subdomain), so you must use Nginx proxy manager to handle the proxy setup. So after setting up your frontend + backend proxy host as shown below:
 
-![Frontend and backend setup](https://gist.github.com/assets/40396070/1115c697-592a-4353-bfb2-5fa13787c1a0)
+![Frontend and backend setup](https://github.com/vicradon/devops-stage-2/assets/40396070/697aeefd-d700-40dd-b1a0-b0baa54a0baa)
 
 you should set the backend proxying in the custom locations tab:
 
-![Proxying in the /api, /docs, and /redoc](https://gist.github.com/assets/40396070/4b4eeb41-47af-4d33-95c7-ed089c233d75)
+![Proxying in the /api, /docs, and /redoc](https://github.com/vicradon/devops-stage-2/assets/40396070/59cf3231-882f-419a-a107-8414d1f7ad0c)
 
 After doing this, modify the compose.yaml frontend service's VITE_API_URL environment variable to instead point to your subdomain
 
@@ -173,4 +173,4 @@ frontend:
 
 After proxying all the components, your nginx proxy manager proxy dashboard will look like this:
 
-![Nginx proxy manager dashboard](https://gist.github.com/assets/40396070/94cc0b58-4233-470f-b650-02e0980a90d4)
+![Nginx proxy manager dashboard](https://github.com/vicradon/devops-stage-2/assets/40396070/7ebfba1b-8e1c-4ba7-a69d-98886391b8d7)

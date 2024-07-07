@@ -174,3 +174,15 @@ frontend:
 After proxying all the components, your nginx proxy manager proxy dashboard will look like this:
 
 ![Nginx proxy manager dashboard](https://github.com/vicradon/devops-stage-2/assets/40396070/7ebfba1b-8e1c-4ba7-a69d-98886391b8d7)
+
+## Proxying www to non-www
+
+Some users enter www before entering your site name so you can handle redirects using the proxy manager. Simply create new subdomains that point to the IP address (A record) and then configure redirect in the advanced tab of the new proxy host. So you configure a new proxy host as normal and use www.yourdomain.ext as the domain. You can also configure SSL for this. And for the advanced tab, it will have the following snippet:
+
+```conf
+return 301 $forward_scheme://yourdomain.ext$request_uri;
+```
+
+In the end, you should have up to 6 proxy hosts
+![proxy hosts](https://github.com/vicradon/devops-stage-2/assets/40396070/f4a48912-3987-4a63-9ddd-840fef326bd6)
+

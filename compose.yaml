@@ -53,7 +53,7 @@ services:
       [
         "sh",
         "-c",
-        "apk add --no-cache bash && mkdir -p /opt/nginxproxymanager && touch /opt/nginxproxymanager/db.sqlite"
+        "apk add --no-cache bash && if [ ! -d '/opt/nginxproxymanager' ]; then mkdir -p /opt/nginxproxymanager; fi && if [ ! -f '/opt/nginxproxymanager/db.sqlite' ]; then touch /opt/nginxproxymanager/db.sqlite; fi"
       ]
 
   nginxproxymanager:

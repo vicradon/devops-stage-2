@@ -46,23 +46,30 @@ services:
       - backend
     restart: always
 
-  nginxproxymananger:
-    image: 'jc21/nginx-proxy-manager:latest'
+  init-nginxproxymanager:
+    image: alpine:latest
+    restart: unless-stopped # Run once unless manually stopped
+    command:
+      [
+        "sh",
+        "-c",
+        "apk add --no-cache bash && mkdir -p /opt/nginxproxymanager && touch /opt/nginxproxymanager/db.sqlite"
+      ]
+
+  nginxproxymanager:
+    image: "jc21/nginx-proxy-manager:latest"
     restart: always
+    depends_on:
+      - init-nginxproxymanager
     ports:
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '8090:81' # Admin Web Port
-
+      - "80:80" # Public HTTP Port
+      - "443:443" # Public HTTPS Port
+      - "8090:81" # Admin Web Port
     environment:
-      DB_SQLITE_FILE: "/opt/nginxproxymananger/db.sqlite" # Path to SQLite file
-
+      DB_SQLITE_FILE: "/opt/nginxproxymanager/db.sqlite"
     volumes:
-      - /opt/nginxproxymananger:/opt/nginxproxymananger # Mount directory containing db.sqlite
-      - /opt/nginxproxymananger/letsencrypt:/etc/letsencrypt # Mount letsencrypt directory for SSL certificates
-      - ./init_nginxproxymanager.sh:/init_nginxproxymanager.sh # Mount the initialization script
-
-    entrypoint: [ "/bin/sh", "-c", "/init_nginxproxymanager.sh /init" ]
+      - /opt/nginxproxymanager:/opt/nginxproxymanager
+      - /opt/nginxproxymanager/letsencrypt:/etc/letsencrypt
 
 volumes:
   postgres_data:

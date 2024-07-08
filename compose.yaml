@@ -1,10 +1,8 @@
 services:
   postgresdb:
     image: postgres:latest
-    environment:
-      POSTGRES_DB: app
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: humanslovedbs
+    env_file:
+      - ./backend/.env
     ports:
       - "5432:5432"
     volumes:
@@ -22,9 +20,8 @@ services:
       ADMINER_DEFAULT_DRIVER: pgsql
 
   backend:
-    environment:
-      POSTGRES_SERVER: postgresdb
-      POSTGRES_PASSWORD: humanslovedbs
+    env_file:
+      - ./backend/.env
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -35,8 +32,8 @@ services:
     restart: always
 
   frontend:
-    environment:
-      VITE_API_URL: "https://devopstask2.osinachi.me"
+    env_file:
+      - ./frontend/.env
     build:
       context: ./frontend
       dockerfile: Dockerfile
